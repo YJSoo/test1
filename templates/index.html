@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container bg-white">
+    <h2 class="text-center mb-4">降水预测查询</h2>
+    <form action="/predict" method="POST">
+        <div class="mb-3">
+            <label for="region" class="form-label">选择地区</label>
+            <select class="form-select" id="region" name="region" required>
+                <option value="" selected disabled>请选择地区</option>
+                <option value="北京市">北京市</option>
+                <option value="上海市">上海市</option>
+                <option value="安徽省">安徽省</option>
+                <option value="广东省">广东省</option>
+                <!-- 添加更多省份选项 -->
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="year" class="form-label">选择年份</label>
+            <select class="form-select" id="year" name="year" required>
+                <option value="" selected disabled>请选择年份</option>
+                <option value="2020">2020 (历史数据)</option>
+                <option value="2021">2021 (历史数据)</option>
+                <option value="2022">2022 (历史数据)</option>
+                <option value="2025">2025 (预测数据)</option>
+                <option value="2026">2026 (预测数据)</option>
+            </select>
+        </div>
+        
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">查询降水数据</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

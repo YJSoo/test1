@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}预测结果 - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="result-card card">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">降水预测结果</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>地区:</strong> {{ result.region }}
+            </div>
+            <div class="col-md-6">
+                <strong>年份:</strong> {{ result.year }}
+            </div>
+        </div>
+        
+        <div class="alert {% if result.predicted %}alert-warning{% else %}alert-info{% endif %}">
+            <h5 class="alert-heading">
+                {% if result.predicted %}
+                <i class="bi bi-graph-up"></i> 预测降水量
+                {% else %}
+                <i class="bi bi-archive"></i> 历史降水量
+                {% endif %}
+            </h5>
+            <hr>
+            <p class="mb-0">
+                <span class="display-6">{{ result.rain }}</span> 
+                <small class="text-muted">{{ result.unit }}</small>
+            </p>
+        </div>
+        
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="/" class="btn btn-outline-primary">返回查询</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
