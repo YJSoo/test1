@@ -18,9 +18,11 @@ def index():
 @app.route('/predict_rainfall', methods=['POST'])
 def predict_rainfall():
     try:
-        # 获取表单参数
-        region = request.form.get('region')
-        year = request.form.get('year')
+        params = request.get_json()  # 获取千帆平台传递的JSON参数
+
+        # 检查是否包含必需的参数
+        region = params.get('region')
+        year = params.get('year')
 
         if not region or not year:
             return render_template("results.html", error="缺少必要参数: 地区或年份")
