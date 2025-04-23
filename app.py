@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # 加载数据
 df = pd.read_excel("yearwater_converted.xlsx")
-df_sun = pd.read_csv("yearsun.csv")
+df_sun = pd.read_csv("sunyear_processed.csv")
 
 
 
@@ -73,31 +73,33 @@ def predict_rainfall():
 
             rain = target_row[str(year)].values[0]
 
-            # 预测日照
-            if year >= 2025:
-                # 预测未来数据
-                history_sun = target_row_sun[[str(y) for y in range(1960, 2023) if str(y) in df_sun.columns]].values[0]
-                history_sun = pd.Series(history_sun).dropna()
+        target_row_sun = df_sun[df_sun['Region'] == region]
 
-                if len(history_sun) < 10:
-                    return render_template("results.html", error="日照数据历史数据不足，无法进行预测")
+        if year >= 2025:
+            # Forecast future sunshine data
+            history_sun = target_row_sun[[str(y) for y in range(1960, 2023) if str(y) in df_sun.columns]].values[0]
+            history_sun = pd.Series(history_sun).dropna()
 
-                steps_sun = year - 2022
-                forecast_sun = arima_forecast(history_sun, steps=steps_sun)
+            if len(history_sun) < 10:
+                return render_template("results.html", error="日照数据历史数据不足，无法进行预测")
 
-                if year == 2025:
-                    sunshine = forecast_sun[0] if isinstance(forecast_sun, list) else forecast_sun
-                elif year == 2026:
-                    sunshine = forecast_sun[1] if isinstance(forecast_sun, list) and len(forecast_sun) > 1 else np.nan
-                else:
-                    return render_template("results.html", error="只支持预测2025或2026年")
+            steps_sun = year - 2022
+            forecast_sun = arima_forecast(history_sun, steps=steps_sun)
+
+            if year == 2025:
+                sunshine = forecast_sun[0] if isinstance(forecast_sun, list) else forecast_sun
+            elif year == 2026:
+                sunshine = forecast_sun[1] if isinstance(forecast_sun, list) and len(forecast_sun) > 1 else np.nan
             else:
-                # 获取历史数据
-                if str(year) not in df_sun.columns:
-                    return render_template("results.html", error=f"无{year}年日照数据")
+                return render_template("results.html", error="只支持预测2025或2026年")
+        else:
+            # Get historical sunshine data
+            if str(year) not in df_sun.columns:
+                return render_template("results.html", error=f"无{year}年日照数据")
 
-                sunshine = target_row_sun[str(year)].values[0]
+            sunshine = target_row_sun[str(year)].values[0]
 
+        # Return the result
         result = {
             'region': region,
             'year': year,
@@ -105,7 +107,7 @@ def predict_rainfall():
             'sunshine': sunshine
         }
 
-        return jsonify(result)  # 返回JSON格式的结果
+        return jsonify(result)  # Return results in JSON format
 
 
     # return render_template("results.html", region=region, year=year, rain=rain, predicted=(year >= 2025))
