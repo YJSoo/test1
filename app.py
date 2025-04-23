@@ -9,11 +9,11 @@ app = Flask(__name__)
 df = pd.read_excel("yearwater_converted.xlsx")
 
 # 获取所有地区
-# regions = df["PR"].dropna().unique().tolist()
-#
-# @app.route('/')
-# def index():
-#     return render_template("index.html", regions=regions)
+regions = df["PR"].dropna().unique().tolist()
+
+@app.route('/')
+def index():
+    return render_template("index.html", regions=regions)
 
 @app.route('/predict_rainfall', methods=['POST'])
 def predict_rainfall():
