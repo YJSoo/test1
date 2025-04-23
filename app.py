@@ -77,7 +77,11 @@ def predict_rainfall():
 
         if year >= 2025:
             # Forecast future sunshine data
-            history_sun = target_row_sun[[str(y) for y in range(1960, 2023) if str(y) in df_sun.columns]].values[0]
+            history_sun = target_row_sun[
+                (target_row_sun['Year'] >= 1960) & (target_row_sun['Year'] <= 2022)
+                ].sort_values('Year')['Sunshine_Hours']
+
+            # 确保数据是Series格式且去除缺失值
             history_sun = pd.Series(history_sun).dropna()
 
             if len(history_sun) < 10:
