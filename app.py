@@ -83,4 +83,4 @@ def predict_rainfall():
         return render_template("results.html", error=f"服务器内部错误: {str(e)}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)
