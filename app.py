@@ -104,14 +104,11 @@ def predict_rainfall():
             sunshine = target_row_sun[str(year)].values[0]/365
 
         # Return the result
-        result = {
-            'region': region,
-            'year': year,
+        return {
             'rainfall': rain,
             'sunshine': sunshine
         }
 
-        return jsonify(result)  # Return results in JSON format
 
 
     # return render_template("results.html", region=region, year=year, rain=rain, predicted=(year >= 2025))
