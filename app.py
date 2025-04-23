@@ -101,7 +101,7 @@ def predict_rainfall():
             if str(year) not in df_sun.columns:
                 return render_template("results.html", error=f"无{year}年日照数据")
 
-            sunshine = target_row_sun[str(year)].values[0]
+            sunshine = target_row_sun[str(year)].values[0]/365
 
         # Return the result
         result = {
