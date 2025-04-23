@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template,Response
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
