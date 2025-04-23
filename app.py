@@ -80,7 +80,12 @@ def predict_rainfall():
         # return render_template("results.html", region=region, year=year, rain=rain, predicted=(year >= 2025))
 
     except Exception as e:
-        return render_template("results.html", error=f"服务器内部错误: {str(e)}")
+        return {
+            "region": region,
+            "year": year,
+            "rain": rain,
+            "predicted": (year >= 2025)  # 如果是未来年份，标记为预测
+        }
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
