@@ -156,7 +156,7 @@ def predict_rainfall():
         return {
             'rainfall': round(float(rain), 2),
             'sunshine': round(float(sunshine), 2),
-            'price_result': price_result
+            'price_result': product_results
         }
 
 
