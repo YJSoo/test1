@@ -106,59 +106,58 @@ def predict_rainfall():
 
             sunshine = target_row_sun[str(year)].values[0]/365
 
-        product_results = []
-        if year >= 2025:
-            for product in products:
-                row = df_price[df_price["农产品名称"] == product]
-                if len(row) == 0:
-                    continue
-
-                price_columns = [y for y in range(2005, 2024) if y in df_price.columns]
-                history_price = row[price_columns].values[0]
-                history_price = pd.Series(history_price).dropna()
-
-                if len(history_price) < 2:
-                    continue
-
-                last_year_price = history_price.iloc[-1]
-                if len(history_price) < 10:
-                    # 少于10个年份，用平均值
-                    predicted_price = np.mean(history_price)
-                else:
-                    steps_price = year - 2023
-                    forecast_price = arima_forecast(history_price, steps=steps_price)
-                    predicted_price = forecast_price[0] if isinstance(forecast_price,
-                                                                      (np.ndarray, list)) else forecast_price
-
-                if pd.isna(predicted_price) or last_year_price == 0:
-                    continue
-
-                growth_rate = (predicted_price - last_year_price) / last_year_price
-                if growth_rate > -0.05:
-                    product_results.append({
-                        "product": product,
-                        "predicted_price": round(float(predicted_price), 2),
-                        "growth_rate": round(float(growth_rate) * 100, 2)
-                    })
-        else:
-            # 2024及之前的数据直接读取原始数据
-            for product in products:
-                row = df_price[df_price["农产品名称"] == product]
-                if len(row) == 0 or str(year) not in df_price.columns:
-                    continue
-                price = row[str(year)].values[0]
-                if not pd.isna(price):
-                    product_results.append({
-                        "product": product,
-                        "predicted_price": round(float(price), 2),
-                        "growth_rate": None
-                    })
+        # product_results = []
+        # if year >= 2025:
+        #     for product in products:
+        #         row = df_price[df_price["农产品名称"] == product]
+        #         if len(row) == 0:
+        #             continue
+        #
+        #         price_columns = [y for y in range(2005, 2024) if y in df_price.columns]
+        #         history_price = row[price_columns].values[0]
+        #         history_price = pd.Series(history_price).dropna()
+        #
+        #         if len(history_price) < 2:
+        #             continue
+        #
+        #         last_year_price = history_price.iloc[-1]
+        #         if len(history_price) < 10:
+        #             # 少于10个年份，用平均值
+        #             predicted_price = np.mean(history_price)
+        #         else:
+        #             steps_price = year - 2023
+        #             forecast_price = arima_forecast(history_price, steps=steps_price)
+        #             predicted_price = forecast_price[0] if isinstance(forecast_price,
+        #                                                               (np.ndarray, list)) else forecast_price
+        #
+        #         if pd.isna(predicted_price) or last_year_price == 0:
+        #             continue
+        #
+        #         growth_rate = (predicted_price - last_year_price) / last_year_price
+        #         if growth_rate > -0.05:
+        #             product_results.append({
+        #                 "product": product,
+        #                 "predicted_price": round(float(predicted_price), 2),
+        #                 "growth_rate": round(float(growth_rate) * 100, 2)
+        #             })
+        # else:
+        #     # 2024及之前的数据直接读取原始数据
+        #     for product in products:
+        #         row = df_price[df_price["农产品名称"] == product]
+        #         if len(row) == 0 or str(year) not in df_price.columns:
+        #             continue
+        #         price = row[str(year)].values[0]
+        #         if not pd.isna(price):
+        #             product_results.append({
+        #                 "product": product,
+        #                 "predicted_price": round(float(price), 2),
+        #                 "growth_rate": None
+        #             })
 
         # Return the result
         return {
             'rainfall': round(float(rain), 2),
-            'sunshine': round(float(sunshine), 2),
-            'price_result': product_results
+            'sunshine': round(float(sunshine), 2)
         }
 
 
