@@ -11,10 +11,9 @@ df_sun = pd.read_csv("sunyear_processed.csv")
 df_price = pd.read_excel("yearprice.xlsx")
 
 
-
-
 # 获取所有地区
 regions = df["PR"].dropna().unique().tolist()
+products = df_price["农产品名称"].dropna().unique().tolist()
 
 @app.route('/')
 def index():
