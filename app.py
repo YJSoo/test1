@@ -9,6 +9,8 @@ app = Flask(__name__)
 df = pd.read_excel("yearwater_converted.xlsx")
 df_sun = pd.read_csv("sunyear_processed.csv")
 df_price = pd.read_excel("yearprice.xlsx")
+for col in df_price.columns[1:]:  # 跳过第一列"农产品名称"
+    df_price[col] = pd.to_numeric(df_price[col], errors='coerce')  # 转换失败设为NaN
 
 
 # 获取所有地区
