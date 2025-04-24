@@ -8,6 +8,9 @@ app = Flask(__name__)
 # 加载数据
 df = pd.read_excel("yearwater_converted.xlsx")
 df_sun = pd.read_csv("sunyear_processed.csv")
+df_price = pd.read_excel("yearprice.xlsx")
+products = df_price["农产品名称"].dropna().unique().tolist()  # 获取农产品列表
+
 
 
 
@@ -103,10 +106,62 @@ def predict_rainfall():
 
             sunshine = target_row_sun[str(year)].values[0]/365
 
+            # 3. 预测农产品价格数据
+        product_prices = {}
+        if product:
+            products_to_predict = [product]
+        else:
+            products_to_predict = df_price["农产品名称"].dropna().unique()
+
+        for prod in products_to_predict:
+            target_row_price = df_price[df_price["农产品名称"] == prod]
+            if len(target_row_price) == 0:
+                continue  # 无数据直接跳过
+
+            if year >= 2025:
+                price_columns = [str(y) for y in range(2005, 2024) if str(y) in df_price.columns]
+                history_price = target_row_price[price_columns].values[0]
+                history_price = pd.Series(history_price).dropna()
+
+                if len(history_price) == 0:
+                    continue  # 没有历史数据
+
+                if len(history_price) < 10:
+                    forecast = history_price.mean()
+                else:
+                    forecast = arima_forecast(history_price, steps=year - 2023)
+                    forecast = forecast[0] if year == 2025 else forecast[1]
+
+                last_year_price = history_price.iloc[-1]  # 最后一年的价格
+                change_rate = abs((forecast - last_year_price) / last_year_price)
+
+                if change_rate <= 0.1:  # 涨跌幅在±10%以内
+                    product_prices[prod] = {
+                        "forecast": round(float(forecast), 2),
+                        "last_year_price": round(float(last_year_price), 2),
+                        "change_rate": round(float(change_rate * 100), 2)
+                    }
+
+            else:
+                if str(year) not in df_price.columns or str(year - 1) not in df_price.columns:
+                    continue  # 缺少年份数据
+                curr_price = target_row_price[str(year)].values[0]
+                last_price = target_row_price[str(year - 1)].values[0]
+                if pd.isna(curr_price) or pd.isna(last_price):
+                    continue
+                change_rate = abs((curr_price - last_price) / last_price)
+                if change_rate <= 0.1:
+                    product_prices[prod] = {
+                        "price": round(float(curr_price), 2),
+                        "last_year_price": round(float(last_price), 2),
+                        "change_rate": round(float(change_rate * 100), 2)
+                    }
+
         # Return the result
         return {
-            'rainfall': rain,
-            'sunshine': sunshine
+            'rainfall': round(float(rain), 2),
+            'sunshine': round(float(sunshine), 2),
+            'price' : product_prices
         }
 
 
