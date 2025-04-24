@@ -113,7 +113,7 @@ def predict_rainfall():
                 if len(row) == 0:
                     continue
 
-                price_columns = [str(y) for y in range(2005, 2024) if str(y) in df_price.columns]
+                price_columns = [y for y in range(2005, 2024) if y in df_price.columns]
                 history_price = row[price_columns].values[0]
                 history_price = pd.Series(history_price).dropna()
 
@@ -134,7 +134,7 @@ def predict_rainfall():
                     continue
 
                 growth_rate = (predicted_price - last_year_price) / last_year_price
-                if growth_rate > -0.1:
+                if growth_rate > -0.05:
                     product_results.append({
                         "product": product,
                         "predicted_price": round(float(predicted_price), 2),
