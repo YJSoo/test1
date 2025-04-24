@@ -108,10 +108,7 @@ def predict_rainfall():
 
             # 3. 预测农产品价格数据
         product_prices = {}
-        if product:
-            products_to_predict = [product]
-        else:
-            products_to_predict = df_price["农产品名称"].dropna().unique()
+        products_to_predict = df_price["农产品名称"].dropna().unique()
 
         for prod in products_to_predict:
             target_row_price = df_price[df_price["农产品名称"] == prod]
